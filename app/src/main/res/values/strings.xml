@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">密码本</string>
+    <string name="publicKey">MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAIuy+lN9LvBKsdLJFJ0ljVVU5u1ZpTvsCrUoY5Q3Y7nOL5Z2y4maL/Bad/Rp9L1zKZC3SpSDlLQS/sOQrl0YZi8CAwEAAQ==</string>
+    <string name="privateKey">MIIBUwIBADANBgkqhkiG9w0BAQEFAASCAT0wggE5AgEAAkEAi7L6U30u8Eqx0skUnSWNVVTm7VmlO+wKtShjlDdjuc4vlnbLiZov8Fp39Gn0vXMpkLdKlIOUtBL+w5CuXRhmLwIDAQABAkAQV0U00uXUscgPMfo5T5UysBW7GctcMQYnnqvXQItnxmr4hXAAGiR87rhAr+Y39/sy3HeEyavwc60Vo93Y0sthAiEA8SK93p1o1/ikRovHo0vFJBvlr9O2zY3g6sR6hH/DPLcCIQCUT4JooVFy+yT0lZPckZkT2r/CYjARae6SDIvLiUqaSQIgdBloFYDwc9uxLI4sZsEagBI2enuS7lE7U42Z96WUGO0CIFtL4pQ0EeZ88U/asA3MVvYg54BqXvqpQiIHtRqTJih5AiAlddLiNRekLVcEzkF5pLqIIWBNgytxLft5SmOZhF/lkA==</string>
+</resources>
