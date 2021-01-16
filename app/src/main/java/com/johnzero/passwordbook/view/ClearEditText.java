@@ -13,6 +13,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatEditText;
 
+/**
+ * @author: JohnZero
+ * @date: 2021-01-16
+ **/
 public class ClearEditText extends AppCompatEditText implements TextWatcher, View.OnFocusChangeListener {
     private Drawable mClearDrawable; //清除按钮图片
     private boolean hasFocus;

@@ -54,6 +54,7 @@ public class PasswordListActivity extends BaseActivity implements View.OnClickLi
     PasswordAdapter passwordAdapter;
     public static String searchText = "";
     public static int itemPosition = 0;
+    static int check=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +107,7 @@ public class PasswordListActivity extends BaseActivity implements View.OnClickLi
         Utils.log("PasswordListActivity:onResume");
         updateRecyclerView();
         if (PasswordAdapter.isShow) layout_operation.setVisibility(View.VISIBLE);
+        display();
     }
 
     @Override
@@ -124,17 +126,20 @@ public class PasswordListActivity extends BaseActivity implements View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()) {
             case  R.id.tv_title:
-                navigate(VerifyActivity.class);
+                if(!PasswordAdapter.isShow) navigate(VerifyActivity.class);
                 break;
             case R.id.btn_new:
                 PasswordInfoActivity.index = -1;
                 navigate(PasswordInfoActivity.class);
+                display();
                 break;
             case R.id.btn_selectAll:
                 PasswordInfo passwordInfo = new PasswordInfo();
                 passwordInfo.setChecked(true);
                 passwordInfo.updateAll("isChecked=0");
                 updateRecyclerView();
+                check=passwordAdapter.getItemCount();
+                display();
                 break;
             case R.id.btn_selectPart:
                 for (int i = 0; i < 2; i++) { //不知为何必须重复点击两次才有效
@@ -144,6 +149,7 @@ public class PasswordListActivity extends BaseActivity implements View.OnClickLi
                             if (count == 1) {
                                 info.setChecked(true);
                                 info.save();
+                                check++;
                             }
                         } else {
                             count++;
@@ -151,6 +157,7 @@ public class PasswordListActivity extends BaseActivity implements View.OnClickLi
                         }
                     updateRecyclerView();
                 }
+                display();
                 break;
             case R.id.btn_delete:
                 LitePal.deleteAll(PasswordInfo.class, "isChecked=1");
@@ -160,6 +167,8 @@ public class PasswordListActivity extends BaseActivity implements View.OnClickLi
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                check=0;
+                display();
                 break;
             case R.id.btn_cancel:
                 PasswordAdapter.isShow = false;
@@ -169,6 +178,8 @@ public class PasswordListActivity extends BaseActivity implements View.OnClickLi
                 }
                 updateRecyclerView();
                 layout_operation.setVisibility(View.GONE);
+                check=0;
+                display();
                 break;
         }
     }
@@ -248,6 +259,7 @@ public class PasswordListActivity extends BaseActivity implements View.OnClickLi
             PasswordAdapter.isShow = true;
             updateRecyclerView();
             layout_operation.setVisibility(View.VISIBLE);
+            display();
         }
     }
 
@@ -297,9 +309,21 @@ public class PasswordListActivity extends BaseActivity implements View.OnClickLi
         TextView tv_modifyTime = (TextView) viewParent.findViewById(R.id.tv_modifyTime);
         String modifyTime = tv_modifyTime.getText().toString();
         PasswordInfo passwordInfo = LitePal.where("modifyTime = ?", modifyTime).find(PasswordInfo.class).get(0);
-        if (checkBox.isChecked()) passwordInfo.setChecked(true);
-        else passwordInfo.setChecked(false);
+        if (checkBox.isChecked()) {
+            passwordInfo.setChecked(true);
+            check++;
+            display();
+        }
+        else {
+            passwordInfo.setChecked(false);
+            check--;
+            display();
+        }
         passwordInfo.save();
     }
 
+    void display(){
+        if(PasswordAdapter.isShow) tv_title.setText(check+"/"+passwordAdapter.getItemCount());
+        else tv_title.setText("Password Book");
+    }
 }
