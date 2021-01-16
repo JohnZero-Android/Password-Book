@@ -54,28 +54,26 @@ public class PasswordListActivity extends BaseActivity implements View.OnClickLi
     PasswordAdapter passwordAdapter;
     public static String searchText = "";
     public static int itemPosition = 0;
+    static int check=0;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+    protected void onCreate(Bundle savedInstanceState) { super.onCreate(savedInstanceState); }
 
     @Override
-    protected int initLayout() {
-        return R.layout.activity_password_list;
-    }
+    protected int initLayout() { return R.layout.activity_password_list; }
 
     @Override
     protected void initData() {
         mGestureDetector = new GestureDetector(this, this);
+        //Utils.passwordIn(mContext);
         SharedPreferences sharedPreferences = mContext.getSharedPreferences("PasswordBook", Utils.mode);
-        CipherUtil.publicKey = sharedPreferences.getString("publicKey", mContext.getString(R.string.publicKey));
-        CipherUtil.privateKey = sharedPreferences.getString("privateKey", mContext.getString(R.string.privateKey));
+        CipherUtil.publicKey= sharedPreferences.getString("publicKey", mContext.getString(R.string.publicKey));
+        CipherUtil.privateKey= sharedPreferences.getString("privateKey", mContext.getString(R.string.privateKey));
     }
 
     @Override
     protected void initView() {
-        tv_title = findViewById(R.id.tv_title);
+        tv_title=findViewById(R.id.tv_title);
         et_search = findViewById(R.id.et_search);
         btn_new = findViewById(R.id.btn_new);
         recyclerView = findViewById(R.id.recyclerView);
@@ -103,33 +101,33 @@ public class PasswordListActivity extends BaseActivity implements View.OnClickLi
         super.onResume();
         updateRecyclerView();
         if (PasswordAdapter.isShow) layout_operation.setVisibility(View.VISIBLE);
+        display();
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-    }
+    protected void onPause() { super.onPause(); }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
+    protected void onDestroy() { super.onDestroy(); }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.tv_title:
-                if (!PasswordAdapter.isShow) navigate(VerifyActivity.class);
+            case  R.id.tv_title:
+                if(!PasswordAdapter.isShow) navigate(VerifyActivity.class);
                 break;
             case R.id.btn_new:
                 PasswordInfoActivity.index = -1;
                 navigate(PasswordInfoActivity.class);
+                display();
                 break;
             case R.id.btn_selectAll:
                 PasswordInfo passwordInfo = new PasswordInfo();
                 passwordInfo.setChecked(true);
                 passwordInfo.updateAll("isChecked=0");
                 updateRecyclerView();
+                check=passwordAdapter.getItemCount();
+                display();
                 break;
             case R.id.btn_selectPart:
                 for (int i = 0; i < 2; i++) { //不知为何必须重复点击两次才有效
@@ -139,6 +137,7 @@ public class PasswordListActivity extends BaseActivity implements View.OnClickLi
                             if (count == 1) {
                                 info.setChecked(true);
                                 info.save();
+                                check++;
                             }
                         } else {
                             count++;
@@ -146,6 +145,7 @@ public class PasswordListActivity extends BaseActivity implements View.OnClickLi
                         }
                     updateRecyclerView();
                 }
+                display();
                 break;
             case R.id.btn_delete:
                 LitePal.deleteAll(PasswordInfo.class, "isChecked=1");
@@ -155,6 +155,8 @@ public class PasswordListActivity extends BaseActivity implements View.OnClickLi
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                check=0;
+                display();
                 break;
             case R.id.btn_cancel:
                 PasswordAdapter.isShow = false;
@@ -164,6 +166,8 @@ public class PasswordListActivity extends BaseActivity implements View.OnClickLi
                 }
                 updateRecyclerView();
                 layout_operation.setVisibility(View.GONE);
+                check=0;
+                display();
                 break;
         }
     }
@@ -243,6 +247,7 @@ public class PasswordListActivity extends BaseActivity implements View.OnClickLi
             PasswordAdapter.isShow = true;
             updateRecyclerView();
             layout_operation.setVisibility(View.VISIBLE);
+            display();
         }
     }
 
@@ -274,7 +279,6 @@ public class PasswordListActivity extends BaseActivity implements View.OnClickLi
         passwordAdapter = new PasswordAdapter(searchResult);
         recyclerView.setAdapter(passwordAdapter);
         recyclerView.scrollToPosition(itemPosition);
-        display();
     }
 
     public void search() {
@@ -282,33 +286,32 @@ public class PasswordListActivity extends BaseActivity implements View.OnClickLi
         searchResult.clear();
         for (PasswordInfo info : passwordList) {
             String title = info.getTitle().toLowerCase();
-            if (title.contains(searchText)) searchResult.add(info);
+            if (title.contains(searchText))
+                searchResult.add(info);
         }
     }
 
     public void checkBoxClick(View view) {
-        View itemView = recyclerView.findChildViewUnder(view.getX(), view.getY());
-        itemPosition = recyclerView.getChildPosition(itemView);
         CheckBox checkBox = (CheckBox) view;
         View viewParent = (View) view.getParent();
         TextView tv_modifyTime = (TextView) viewParent.findViewById(R.id.tv_modifyTime);
         String modifyTime = tv_modifyTime.getText().toString();
         PasswordInfo passwordInfo = LitePal.where("modifyTime = ?", modifyTime).find(PasswordInfo.class).get(0);
-        if (checkBox.isChecked()) passwordInfo.setChecked(true);
-        else passwordInfo.setChecked(false);
+        if (checkBox.isChecked()) {
+            passwordInfo.setChecked(true);
+            check++;
+            display();
+        }
+        else {
+            passwordInfo.setChecked(false);
+            check--;
+            display();
+        }
         passwordInfo.save();
-        updateRecyclerView();
     }
 
-    int getCount() {
-        int count = 0;
-        for (PasswordInfo info : searchResult)
-            if (info.isChecked()) count++;
-        return count;
-    }
-
-    void display() {
-        if (PasswordAdapter.isShow) tv_title.setText(getCount() + "/" + passwordAdapter.getItemCount());
+    void display(){
+        if(PasswordAdapter.isShow) tv_title.setText(check+"/"+passwordAdapter.getItemCount());
         else tv_title.setText("Password Book");
     }
 }
