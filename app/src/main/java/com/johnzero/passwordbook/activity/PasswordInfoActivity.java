@@ -114,57 +114,7 @@ public class PasswordInfoActivity extends BaseActivity implements View.OnClickLi
     @Override
     protected void onPause() {
         super.onPause();
-        newTitle=et_title.getText().toString();
-        newPassword=et_password.getText().toString();
-        newNote=et_note.getText().toString();
-
-        if(index>=0){
-            if(newTitle.isEmpty()) {
-                dustbin.performClick();
-                try {
-                    Utils.passwordOut(mContext);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else{
-                //未被删除且标题不为空，之后判读是否被修改
-                if (!newTitle.equals(oldTitle)) {
-                    isChanged = true;
-                    passwordInfo.setTitle(newTitle);
-                }
-                if (!newPassword.equals(oldPassword)) {
-                    isChanged = true;
-                    passwordInfo.setPassword(newPassword);
-                }
-                if (!newNote.equals(oldNote)) {
-                    isChanged = true;
-                    passwordInfo.setNote(newNote);
-                }
-                if (!newAccessTime.equals(oldAccessTime)&&!newAccessTime.isEmpty()) {
-                    isChanged = true;
-                    passwordInfo.setAccessTime(newAccessTime);
-                }
-                if (isChanged) {
-                    passwordInfo.setModifyTime(Utils.parseString(Calendar.getInstance()));
-                    passwordInfo.save();
-                    try {
-                        Utils.passwordOut(mContext);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }else{ //新建
-            if(!newTitle.isEmpty()){
-                passwordInfo=new PasswordInfo(newTitle,newPassword,newNote,newAccessTime,Utils.parseString(Calendar.getInstance()));
-                passwordInfo.save();
-                try {
-                    Utils.passwordOut(mContext);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        if(!PasswordGeneratorActivity.isShow) save();
     }
 
     @Override
@@ -184,6 +134,7 @@ public class PasswordInfoActivity extends BaseActivity implements View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.tv_title:
+                PasswordGeneratorActivity.isShow=true;
                 navigate(com.johnzero.passwordbook.activity.PasswordGeneratorActivity.class);
                 break;
             case R.id.clock:
@@ -245,5 +196,59 @@ public class PasswordInfoActivity extends BaseActivity implements View.OnClickLi
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
         return mGestureDetector.onTouchEvent(motionEvent);
+    }
+
+    public void save(){
+        newTitle=et_title.getText().toString();
+        newPassword=et_password.getText().toString();
+        newNote=et_note.getText().toString();
+
+        if(index>=0){
+            if(newTitle.isEmpty()) {
+                dustbin.performClick();
+                try {
+                    Utils.passwordOut(mContext);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else{
+                //未被删除且标题不为空，之后判读是否被修改
+                if (!newTitle.equals(oldTitle)) {
+                    isChanged = true;
+                    passwordInfo.setTitle(newTitle);
+                }
+                if (!newPassword.equals(oldPassword)) {
+                    isChanged = true;
+                    passwordInfo.setPassword(newPassword);
+                }
+                if (!newNote.equals(oldNote)) {
+                    isChanged = true;
+                    passwordInfo.setNote(newNote);
+                }
+                if (!newAccessTime.equals(oldAccessTime)&&!newAccessTime.isEmpty()) {
+                    isChanged = true;
+                    passwordInfo.setAccessTime(newAccessTime);
+                }
+                if (isChanged) {
+                    passwordInfo.setModifyTime(Utils.parseString(Calendar.getInstance()));
+                    passwordInfo.save();
+                    try {
+                        Utils.passwordOut(mContext);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }else{ //新建
+            if(!newTitle.isEmpty()){
+                passwordInfo=new PasswordInfo(newTitle,newPassword,newNote,newAccessTime,Utils.parseString(Calendar.getInstance()));
+                passwordInfo.save();
+                try {
+                    Utils.passwordOut(mContext);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

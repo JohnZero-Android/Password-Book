@@ -9,6 +9,7 @@ import android.widget.CompoundButton;
 import android.widget.SeekBar;
 
 import com.johnzero.passwordbook.R;
+import com.johnzero.passwordbook.adapter.PasswordAdapter;
 import com.johnzero.passwordbook.util.Utils;
 
 /**
@@ -27,10 +28,21 @@ public class PasswordGeneratorActivity extends BaseActivity implements View.OnCl
     public static boolean[] isChecked=new boolean[]{true,true,true,true};
     public static String[] checkItems=new String[]{"0123456789","`~!@#$￥%^&*()-_=+[]{}\\|;:'\",<.>/?*","abcdefghijklmnopqrstuvwxyz","ABCDEFGHIJKLMNOPQRSTUVWXYZ"};
     public static int length=8;
+    public static boolean isShow=false;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle savedInstanceState) { super.onCreate(savedInstanceState); }
+
+    @Override
+    protected void onResume() { super.onResume(); }
+
+    @Override
+    protected void onPause() { super.onPause(); }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        isShow=false;
     }
 
     @Override

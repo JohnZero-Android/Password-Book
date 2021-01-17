@@ -16,11 +16,14 @@
         <activity
             android:name=".activity.PasswordGeneratorActivity"
             android:theme="@style/MyDialog" />
-        <activity android:name=".activity.PasswordInfoActivity" />
+        <activity
+            android:name=".activity.PasswordInfoActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.PasswordListActivity"
             android:excludeFromRecents="false"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

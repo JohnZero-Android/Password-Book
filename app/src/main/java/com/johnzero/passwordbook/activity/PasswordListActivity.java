@@ -286,8 +286,7 @@ public class PasswordListActivity extends BaseActivity implements View.OnClickLi
         searchResult.clear();
         for (PasswordInfo info : passwordList) {
             String title = info.getTitle().toLowerCase();
-            if (title.contains(searchText))
-                searchResult.add(info);
+            if (title.contains(searchText)) searchResult.add(info);
         }
     }
 
