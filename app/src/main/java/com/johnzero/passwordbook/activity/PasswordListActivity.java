@@ -54,7 +54,7 @@ public class PasswordListActivity extends BaseActivity implements View.OnClickLi
     PasswordAdapter passwordAdapter;
     public static String searchText = "";
     public static int itemPosition = 0;
-    static int check=0;
+    int check=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) { super.onCreate(savedInstanceState); }

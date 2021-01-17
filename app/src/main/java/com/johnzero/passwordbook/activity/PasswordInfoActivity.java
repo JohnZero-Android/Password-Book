@@ -30,7 +30,7 @@ import java.util.Calendar;
  * @author: JohnZero
  * @date: 2020-09-23
  **/
-public class PasswordInfoActivity extends BaseActivity implements View.OnClickListener,View.OnTouchListener, GestureDetector.OnGestureListener{
+public class PasswordInfoActivity extends BaseActivity implements View.OnClickListener, View.OnTouchListener, GestureDetector.OnGestureListener {
     LinearLayout linearLayout;
     TextView tv_title;
     AnalogClock clock;
@@ -44,17 +44,18 @@ public class PasswordInfoActivity extends BaseActivity implements View.OnClickLi
     private Context mContext;
     GestureDetector mGestureDetector;
     PasswordInfo passwordInfo;
-    public static int index=-1; //-1表示新建
-    boolean isChanged=false;
-    String oldTitle="";
-    String oldPassword="";
-    String oldNote="";
-    String oldAccessTime="";
-    String oldModifyTime="";
-    String newTitle="";
-    String newPassword="";
-    String newNote="";
-    public static String newAccessTime="";
+    public static int index = -1; //-1表示新建
+    boolean isChanged = false;
+    String oldTitle = "";
+    String oldPassword = "";
+    String oldNote = "";
+    String oldAccessTime = "";
+    String oldModifyTime = "";
+    String newTitle = "";
+    String newPassword = "";
+    String newNote = "";
+    public static String newAccessTime = "";
+    boolean isDelete = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,34 +63,36 @@ public class PasswordInfoActivity extends BaseActivity implements View.OnClickLi
     }
 
     @Override
-    protected int initLayout() { return R.layout.activity_password_info; }
+    protected int initLayout() {
+        return R.layout.activity_password_info;
+    }
 
     @Override
     protected void initData() {
-        mContext=this;
-        mGestureDetector=new GestureDetector(this,this);
-        newAccessTime="";
-        if(index>=0){
-            passwordInfo= LitePal.find(PasswordInfo.class,index);
-            oldTitle=passwordInfo.getTitle();
-            oldPassword=passwordInfo.getPassword();
-            oldNote=passwordInfo.getNote();
-            oldAccessTime=passwordInfo.getAccessTime();
-            oldModifyTime=passwordInfo.getModifyTime();
+        mContext = this;
+        mGestureDetector = new GestureDetector(this, this);
+        newAccessTime = "";
+        if (index >= 0) {
+            passwordInfo = LitePal.find(PasswordInfo.class, index);
+            oldTitle = passwordInfo.getTitle();
+            oldPassword = passwordInfo.getPassword();
+            oldNote = passwordInfo.getNote();
+            oldAccessTime = passwordInfo.getAccessTime();
+            oldModifyTime = passwordInfo.getModifyTime();
         }
     }
 
     @Override
     protected void initView() {
-        linearLayout=findViewById(R.id.linearLayout);
-        tv_title=findViewById(R.id.tv_title);
-        clock=findViewById(R.id.clock);
-        dustbin=findViewById(R.id.dustbin);
-        et_title=findViewById(R.id.et_title);
-        et_password=findViewById(R.id.et_password);
-        et_note=findViewById(R.id.et_note);
-        btn_get=findViewById(R.id.btn_get);
-        btn_change=findViewById(R.id.btn_change);
+        linearLayout = findViewById(R.id.linearLayout);
+        tv_title = findViewById(R.id.tv_title);
+        clock = findViewById(R.id.clock);
+        dustbin = findViewById(R.id.dustbin);
+        et_title = findViewById(R.id.et_title);
+        et_password = findViewById(R.id.et_password);
+        et_note = findViewById(R.id.et_note);
+        btn_get = findViewById(R.id.btn_get);
+        btn_change = findViewById(R.id.btn_change);
 
         tv_title.setOnClickListener(this);
         clock.setOnClickListener(this);
@@ -102,11 +105,11 @@ public class PasswordInfoActivity extends BaseActivity implements View.OnClickLi
         et_note.setOnTouchListener(this);
         et_note.setLongClickable(true);
 
-        if(index>=0){
+        if (index >= 0) {
             et_title.setText(oldTitle);
             et_password.setText(oldPassword);
             et_note.setText(oldNote);
-            if(!oldModifyTime.isEmpty()) tv_title.setText(oldModifyTime);
+            if (!oldModifyTime.isEmpty()) tv_title.setText(oldModifyTime);
         }
     }
 
@@ -114,14 +117,14 @@ public class PasswordInfoActivity extends BaseActivity implements View.OnClickLi
     @Override
     protected void onPause() {
         super.onPause();
-        if(!PasswordGeneratorActivity.isShow) save();
+        if (!PasswordGeneratorActivity.isShow) save();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        newAccessTime="";
-        TimeDialog.year=0;
+        newAccessTime = "";
+        TimeDialog.year = 0;
     }
 
     @Override
@@ -132,17 +135,18 @@ public class PasswordInfoActivity extends BaseActivity implements View.OnClickLi
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.tv_title:
-                PasswordGeneratorActivity.isShow=true;
+                PasswordGeneratorActivity.isShow = true;
                 navigate(com.johnzero.passwordbook.activity.PasswordGeneratorActivity.class);
                 break;
             case R.id.clock:
-                TimeDialog timeDialog=new TimeDialog.Builder(this).create();
+                TimeDialog timeDialog = new TimeDialog.Builder(this).create();
                 timeDialog.show();
                 break;
             case R.id.dustbin:
-                if(index>=0) LitePal.delete(PasswordInfo.class,index);
+                if (index >= 0) LitePal.delete(PasswordInfo.class, index);
+                isDelete = true;
                 finish();
                 break;
             case R.id.btn_get:
@@ -176,7 +180,6 @@ public class PasswordInfoActivity extends BaseActivity implements View.OnClickLi
 
     @Override
     public void onLongPress(MotionEvent e) {
-
     }
 
     @Override
@@ -185,8 +188,7 @@ public class PasswordInfoActivity extends BaseActivity implements View.OnClickLi
         float endX = e2.getX();
         float beginY = e1.getY();
         float endY = e2.getY();
-
-        if(endX-beginX>Utils.minMove&&Math.abs(endY-beginY)<Utils.maxMove&&Math.abs(velocityX)>Utils.minVelocity){   //右滑
+        if (endX - beginX > Utils.minMove && Math.abs(endY - beginY) < Utils.maxMove && Math.abs(velocityX) > Utils.minVelocity) {//右滑
             finish();
         }
         return false;
@@ -198,56 +200,47 @@ public class PasswordInfoActivity extends BaseActivity implements View.OnClickLi
         return mGestureDetector.onTouchEvent(motionEvent);
     }
 
-    public void save(){
-        newTitle=et_title.getText().toString();
-        newPassword=et_password.getText().toString();
-        newNote=et_note.getText().toString();
+    public void save() {
+        newTitle = et_title.getText().toString();
+        newPassword = et_password.getText().toString();
+        newNote = et_note.getText().toString();
 
-        if(index>=0){
-            if(newTitle.isEmpty()) {
-                dustbin.performClick();
+        if (index >= 0) {
+            if (newTitle.isEmpty()) newTitle = getString(R.string.BlankTitle);
+            //未被删除并判读是否被修改
+            if (!newTitle.equals(oldTitle)) {
+                isChanged = true;
+                passwordInfo.setTitle(newTitle);
+            }
+            if (!newPassword.equals(oldPassword)) {
+                isChanged = true;
+                passwordInfo.setPassword(newPassword);
+            }
+            if (!newNote.equals(oldNote)) {
+                isChanged = true;
+                passwordInfo.setNote(newNote);
+            }
+            if (!newAccessTime.equals(oldAccessTime) && !newAccessTime.isEmpty()) {
+                isChanged = true;
+                passwordInfo.setAccessTime(newAccessTime);
+            }
+            if (isChanged) {
+                passwordInfo.setModifyTime(Utils.parseString(Calendar.getInstance()));
+                if (!isDelete) passwordInfo.save();
                 try {
                     Utils.passwordOut(mContext);
                 } catch (Exception e) {
                     e.printStackTrace();
-                }
-            } else{
-                //未被删除且标题不为空，之后判读是否被修改
-                if (!newTitle.equals(oldTitle)) {
-                    isChanged = true;
-                    passwordInfo.setTitle(newTitle);
-                }
-                if (!newPassword.equals(oldPassword)) {
-                    isChanged = true;
-                    passwordInfo.setPassword(newPassword);
-                }
-                if (!newNote.equals(oldNote)) {
-                    isChanged = true;
-                    passwordInfo.setNote(newNote);
-                }
-                if (!newAccessTime.equals(oldAccessTime)&&!newAccessTime.isEmpty()) {
-                    isChanged = true;
-                    passwordInfo.setAccessTime(newAccessTime);
-                }
-                if (isChanged) {
-                    passwordInfo.setModifyTime(Utils.parseString(Calendar.getInstance()));
-                    passwordInfo.save();
-                    try {
-                        Utils.passwordOut(mContext);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
                 }
             }
-        }else{ //新建
-            if(!newTitle.isEmpty()){
-                passwordInfo=new PasswordInfo(newTitle,newPassword,newNote,newAccessTime,Utils.parseString(Calendar.getInstance()));
-                passwordInfo.save();
-                try {
-                    Utils.passwordOut(mContext);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        } else { //新建
+            if (newTitle.isEmpty()) newTitle = getString(R.string.BlankTitle);
+            passwordInfo = new PasswordInfo(newTitle, newPassword, newNote, newAccessTime, Utils.parseString(Calendar.getInstance()));
+            if (!isDelete) passwordInfo.save();
+            try {
+                Utils.passwordOut(mContext);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
